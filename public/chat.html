@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./chat.css">
+</head>
+<body>
+    <div class="container p-4 detail">
+        <div class="row">
+          <div class="col-3 p-0">
+            <ul class="list-group chat-list">
+                <li class="list-group-item">
+                    <h6>채팅방1</h6>
+                    <h6 class="text-small">채팅방아이디</h6>
+                  </li>
+            </ul>
+          </div>
+          <div class="col-9 p-0">
+            <div class="chat-room">
+              <ul class="list-group chat-content">
+                <li><span class="chat-box">채팅방1 내용</span></li>
+                <li><span class="chat-box">채팅방1 내용</span></li>
+                <li><span class="chat-box mine">채팅방1 내용</span></li>
+              </ul>
+              <div class="input-group">
+                <input class="form-control" id="chat-input">
+                <button class="btn btn-secondary" id="send">전송</button>
+              </div>
+            </div>
+          </div>
+        </div>
+     </div> 
+    
+     
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+
+
+  <script >
+    // Import the functions you need from the SDKs you need
+    //import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    //import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqEiBTzdiNTPD1FDfbsS5_doCAGikmSuk",
+      authDomain: "vintaget-36faf.firebaseapp.com",
+      projectId: "vintaget-36faf",
+      storageBucket: "vintaget-36faf.appspot.com",
+      messagingSenderId: "59895920363",
+      appId: "1:59895920363:web:7fbc4fa307f56f9cf170ae",
+      measurementId: "G-TJK4P9HF42"
+    };
+  
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+ </script>
+
+
+
+
+
+     <script>
+      const db = firebase.firestore();
+      const storage = firebase.storage();
+      var 내uid = JSON.parse(localStorage.getItem('user')).uid;
+    
+      $('#send').click(function(){
+        var 데이터 = {
+          content : $('#chat-input').val(),
+          date : new Date(),
+          uid : 내uid,
+        }
+        db.collection('chatroom').doc(채팅방id).collection('messages').add(데이터)
+      })
+
+      var 채팅방id ; 
+
+      db.collection('chatroom').where('who','array-contains',내uid).get().then((result)=>
+      {
+        result.forEach((a)=>{
+            console.log(a.data());
+            var template =  `<li class="list-group-item">
+                <h6>${a.data().product }</h6>
+                <h6 class="text-small">${a.id}</h6>
+              </li>`
+            $('.chat-list').append(template)  
+
+            $('.list-group-item').click(function(e){
+              채팅방id = $(this).children('.text-small').text()
+            
+              e.stopImmediatePropagation();
+            
+
+            db.collection('chatroom').doc(채팅방id).collection('messages').orderBy('date').onSnapshot((result)=>{
+              $('.chat-content').html('');
+
+              result.forEach((a)=>{
+              //  console.log(a.data())
+              $('.chat-content').append(템플릿)
+              var 템플릿 = `<li><span class="chat-box">${a.data().content}</span></li>`;
+              $('.chat-content').append(템플릿)
+              })
+            })
+            
+            })
+        })
+      })
+    
+     </script>
+</body>
+</html>
+
+
